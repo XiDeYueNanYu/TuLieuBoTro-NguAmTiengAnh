@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Thêm viewport để tối ưu hóa di động -->
+    <title>越南语发音练习</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding-bottom: 300px; /* Mặc định cho màn hình lớn */
+            background-color: #f7fbf3; /*f7fbf3  3f4040*/
+        }
+        #gameContainer {
+            display: block;
+            min-height: calc(100vh - 150px); /* Đảm bảo nội dung chiếm đủ chiều cao màn hình */
+        }
+        #infoBox { 
+            width: 95%; 
+            max-width: 700px;
+            min-height: 100px; 
+            margin: 0 auto; 
+            border: 2px solid #feeec9; /*041b31 1f4263*/
+            background: #fede94; /*ecf2e4 fefefc fede94 */
+            color: #5b5b5b; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: clamp(40px, 5vw, 60px);
+            font-weight: bold;
+        }
+        #contactBox { 
+            width: 90%; 
+            max-width: 700px;
+            min-height: 25px; 
+            margin: 0px auto; 
+            border: 2px solid #feeec9; 
+            background: #fede94; 
+            color: #6b6b6b; 
+            display: flex; 
+            align-items: center; 
+            justify-content: left; 
+            padding-left: 20px;
+            font-size: clamp(16px, 2vw, 20px); 
+            font-weight: bold;
+        }
+        #instructionBox { 
+            width: 90%; 
+            max-width: 700px;
+            min-height: 25px; 
+            margin: 0px auto; 
+            border: 2px solid #feeec9; 
+            background: #fede94; 
+            color: #6b6b6b; 
+            display: flex; 
+            align-items: center; 
+            justify-content: left; 
+            padding-left: 20px;
+            font-size: clamp(16px, 2vw, 20px); 
+            font-weight: bold;
+        }
+        #controls { 
+            position: fixed; /* Cố định ở cuối màn hình */
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 800px; /* Giới hạn chiều rộng tối đa */
+            background: #f7fbf3;
+                        border: 3px solid #f7fbf3;                        
+            padding: 10px 0; 
+           /* box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); */
+            z-index: 1000; 
+        }
+        #controls div {
+            margin: 5px 0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        button { 
+            padding: 8px 8px; 
+            margin: 0 5px; 
+            cursor: pointer; 
+            border: 2px solid #fede94; 
+            background: #fede94; /*192332*/
+                        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+            color: #5b5b5b; 
+            font-size: 28px; 
+            border-radius: 5px; 
+        }
+        #sentenceNumber { 
+            width: 50px; 
+            padding: 10px; 
+            text-align: center; 
+            border: 3px solid #fede94; /*041b31 68838B*/
+            background: #f8e5ba; 
+            color: #000; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            -moz-appearance: textfield; 
+        }
+        #sentenceNumber::-webkit-inner-spin-button, 
+        #sentenceNumber::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        #sentenceNumber:disabled { 
+            background: #eee; 
+        }
+        .disabled { 
+            cursor: not-allowed; 
+            pointer-events: none; 
+        }
+        .active-mode { 
+            border: 3px solid #b6d7a8; 
+        }
+        #indicator { 
+            width: 95%;
+                        max-width: 700px; 
+            min-height: 50px; 
+            margin: 10px auto; 
+                        padding: 5px;
+            border: 3px solid #fed16a; 
+            background: #ffffe0; 
+            border-radius: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        #optionsContainer {
+            width: 100%;
+            max-width: 700px;
+            margin: 10px auto;
+        }
+        .optionBtn {
+            width: 95%; 
+            max-width: 700px;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ffffff;
+            background: #ffffff; /*E6EDD9*/
+            color: #000000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 45px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .optionBtn:hover {
+            background: #D2E4C4;
+        }
+        .correct {
+            background: #B7D7AA !important;
+        }
+        .wrong {
+            background: #CE6D5E !important;
+        }
+        #score { 
+            display: none; 
+            width: 100%;
+            max-width: 700px;
+            margin: 10px auto; 
+            color: #FF6820; 
+            font-size: 30px; 
+            text-align: center;
+        }
+        #wrongSentences { 
+            display: none; 
+            width: 95%; 
+            max-width: 700px; 
+            margin: 10px auto; 
+            padding: 10px; 
+            border: 2px solid #CE6D5E; 
+            background: #FFF0F0; 
+            color: #CE6D5E; 
+            font-size: 30px; 
+            text-align: left; 
+            border-radius: 5px; 
+        }
+        #results { 
+            display: none; 
+            width: 95%;
+            max-width: 700px;        
+            margin: 10px auto; 
+            padding: 10px; 
+            border: 2px solid #734A2E; 
+            background: #fffbef; 
+            color: #000; 
+            font-size: 30px; 
+            text-align: left; 
+            border-radius: 5px; 
+            white-space: pre-line;
+        }
+
+        /* Media query cho thiết bị di động */
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 200px; /* Giảm padding-bottom cho điện thoại */
+            }
+            #controls {
+                padding: 5px 0; /* Giảm padding */
+            }
+            button {
+                padding: 6px 6px; /* Giảm kích thước nút */
+                font-size: 20px; /* Giảm kích thước chữ */
+            }
+            #sentenceNumber {
+                width: 40px; /* Giảm chiều rộng */
+                padding: 8px; /* Giảm padding */
+                font-size: 14px; /* Giảm kích thước chữ */
+            }
+            .optionBtn {
+                font-size: 30px; /* Giảm kích thước chữ cho đáp án */
+                padding: 8px; /* Giảm padding */
+            }
+            #infoBox {
+                font-size: clamp(30px, 4vw, 40px); /* Giảm kích thước chữ */
+            }
+            #contactBox, #instructionBox {
+                font-size: clamp(14px, 2vw, 16px); /* Giảm kích thước chữ */
+            }
+            #indicator {
+                min-height: 40px; /* Giảm chiều cao tối thiểu */
+            }
+            #results, #wrongSentences, #score {
+                font-size: 24px; /* Giảm kích thước chữ */
+                                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="infoBox">习得越南语<br>听力-发音</div>
+        <div id="contactBox">讲师-阮玉煌 | Weixin：XiDeYueNanYu</div>
+        <div id="instructionBox">选择与播放内容相符的选项</div>
+        <div id="indicator"></div>
+        <div id="optionsContainer"></div>
+        <div id="results"></div>
+        <div id="score">0/0</div>
+        <div id="wrongSentences"></div>
+    </div>
+    <div id="controls">
+        <div>
+            <button id="freeModeBtn" class="active-mode">自由模式</button>
+            <button id="testModeBtn">作业模式</button>
+        </div>
+        <div>
+            <button id="autoContinueBtn">自动继续</button>
+            <button id="showHideBtn">显示-隐藏</button>
+        </div>
+        <div>
+            <button id="prevBtn">◀</button>
+            <input type="text" id="sentenceNumber" inputmode="numeric" pattern="[0-9]*">
+            <button id="nextBtn">▶</button>
+            <button id="replayBtn">再听一遍</button>
+        </div>
+    </div>
+    <audio id="mainAudio" src="audio.mp3"></audio>
+    <audio id="correctAudio" src="Dung.mp3"></audio>
+    <audio id="wrongAudio" src="Sai.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('mainAudio');
+        const correctAudio = document.getElementById('correctAudio');
+        const wrongAudio = document.getElementById('wrongAudio');
+        const indicator = document.getElementById('indicator');
+        const sentenceNumber = document.getElementById('sentenceNumber');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const replayBtn = document.getElementById('replayBtn');
+        const freeModeBtn = document.getElementById('freeModeBtn');
+        const testModeBtn = document.getElementById('testModeBtn');
+        const autoContinueBtn = document.getElementById('autoContinueBtn');
+        const showHideBtn = document.getElementById('showHideBtn');
+        const scoreDisplay = document.getElementById('score');
+        const wrongSentencesDisplay = document.getElementById('wrongSentences');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const resultsDisplay = document.getElementById('results');
+
+        const buttons = [prevBtn, nextBtn, replayBtn, freeModeBtn, testModeBtn, autoContinueBtn, showHideBtn];
+
+const sentences = [
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "双唇音",
+        "translation": "辅音 [p] 的发音器官是？",
+        "options": [
+            "唇齿音",
+            "双唇音",
+            "齿龈音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "唇齿音",
+        "translation": "辅音 [f] 的发音器官是？",
+        "options": [
+            "双唇音",
+            "齿龈音",
+            "唇齿音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [t] 的发音器官是？",
+        "options": [
+            "硬腭音",
+            "齿龈音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [s] 的发音器官是？",
+        "options": [
+            "齿间音",
+            "齿龈音",
+            "硬腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿间音",
+        "translation": "辅音 [θ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "齿间音",
+            "唇齿音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "软腭音",
+        "translation": "辅音 [k] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "硬腭音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "声门音",
+        "translation": "辅音 [h] 的发音器官是？",
+        "options": [
+            "软腭音",
+            "喉壁音",
+            "声门音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "双唇音",
+        "translation": "辅音 [m] 的发音器官是？",
+        "options": [
+            "唇齿音",
+            "双唇音",
+            "齿龈音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [n] 的发音器官是？",
+        "options": [
+            "双唇音",
+            "齿龈音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "软腭音",
+        "translation": "辅音 [ŋ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "软腭音",
+            "硬腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "唇齿音",
+        "translation": "辅音 [v] 的发音器官是？",
+        "options": [
+            "双唇音",
+            "唇齿音",
+            "齿间音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [d] 的发音器官是？",
+        "options": [
+            "硬腭音",
+            "软腭音",
+            "齿龈音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿间音",
+        "translation": "辅音 [ð] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "唇齿音",
+            "齿间音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [z] 的发音器官是？",
+        "options": [
+            "齿间音",
+            "齿龈音",
+            "硬腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "硬腭音",
+        "translation": "辅音 [j] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "硬腭音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈后音",
+        "translation": "辅音 [tʃ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "齿龈后音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈后音",
+        "translation": "辅音 [dʒ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "硬腭音",
+            "齿龈后音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈后音",
+        "translation": "辅音 [ʃ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "齿龈后音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈后音",
+        "translation": "辅音 [ʒ] 的发音器官是？",
+        "options": [
+            "齿间音",
+            "齿龈后音",
+            "唇齿音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [l] 的发音器官是？",
+        "options": [
+            "硬腭音",
+            "齿龈音",
+            "双唇音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "齿龈音",
+        "translation": "辅音 [ɹ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "卷舌音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "双唇软腭音",
+        "translation": "辅音 [w] 的发音器官是？",
+        "options": [
+            "唇齿音",
+            "双唇软腭音",
+            "硬腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "唇齿音",
+        "translation": "辅音 [ʍ] 的发音器官是？（如某些方言中\"which\"的发音）",
+        "options": [
+            "双唇音",
+            "唇齿音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "双唇音",
+        "translation": "辅音 [b] 的发音器官是？",
+        "options": [
+            "唇齿音",
+            "双唇音",
+            "齿龈音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "软腭音",
+        "translation": "辅音 [ɡ] 的发音器官是？",
+        "options": [
+            "齿龈音",
+            "硬腭音",
+            "软腭音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、不送气、塞音",
+        "translation": "辅音 [p] 的发音方法是？",
+        "options": [
+            "清、不送气、塞音",
+            "清、送气、塞音",
+            "浊、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、送气、塞音",
+        "translation": "辅音 [pʰ] 的发音方法是？（如单词“pie”中的[p]）",
+        "options": [
+            "浊、塞音",
+            "清、不送气、塞音",
+            "清、送气、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [f] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、鼻音",
+        "translation": "辅音 [m] 的发音方法是？",
+        "options": [
+            "清、鼻音",
+            "浊、鼻音",
+            "浊、边音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、不送气、塞音",
+        "translation": "辅音 [t] 的发音方法是？",
+        "options": [
+            "清、送气、塞音",
+            "清、不送气、塞音",
+            "浊、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [s] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [θ] 的发音方法是？",
+        "options": [
+            "浊、擦音",
+            "清、擦音",
+            "清、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、鼻音",
+        "translation": "辅音 [n] 的发音方法是？",
+        "options": [
+            "清、鼻音",
+            "浊、鼻音",
+            "浊、边音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、鼻音",
+        "translation": "辅音 [ŋ] 的发音方法是？",
+        "options": [
+            "浊、鼻音",
+            "清、鼻音",
+            "浊、擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、擦音",
+        "translation": "辅音 [v] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "浊、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、不送气、塞音",
+        "translation": "辅音 [d] 的发音方法是？",
+        "options": [
+            "清、塞音",
+            "浊、不送气、塞音",
+            "浊、送气、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、擦音",
+        "translation": "辅音 [ð] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、擦音",
+        "translation": "辅音 [z] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "浊、塞擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、近音",
+        "translation": "辅音 [j] 的发音方法是？",
+        "options": [
+            "浊、擦音",
+            "浊、近音",
+            "浊、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、塞擦音",
+        "translation": "辅音 [tʃ] 的发音方法是？",
+        "options": [
+            "清、塞擦音",
+            "浊、塞擦音",
+            "清、擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、塞擦音",
+        "translation": "辅音 [dʒ] 的发音方法是？",
+        "options": [
+            "清、塞擦音",
+            "浊、塞擦音",
+            "浊、擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [ʃ] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、擦音",
+        "translation": "辅音 [ʒ] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "浊、塞擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、边近音",
+        "translation": "辅音 [l] 的发音方法是？",
+        "options": [
+            "浊、鼻音",
+            "浊、边近音",
+            "浊、擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、近音",
+        "translation": "辅音 [ɹ] 的发音方法是？",
+        "options": [
+            "浊、颤音",
+            "浊、近音",
+            "浊、擦音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、近音",
+        "translation": "辅音 [w] 的发音方法是？",
+        "options": [
+            "浊、擦音",
+            "浊、近音",
+            "浊、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [ʍ] 的发音方法是？（如“which”在某些方言中的发音）",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、不送气、塞音",
+        "translation": "辅音 [b] 的发音方法是？",
+        "options": [
+            "清、塞音",
+            "浊、不送气、塞音",
+            "浊、送气、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "清、擦音",
+        "translation": "辅音 [h] 的发音方法是？",
+        "options": [
+            "清、擦音",
+            "浊、擦音",
+            "清、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "浊、不送气、塞音",
+        "translation": "辅音 [ɡ] 的发音方法是？",
+        "options": [
+            "清、塞音",
+            "浊、不送气、塞音",
+            "浊、送气、塞音"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[p], [b], [m]",
+        "translation": "下列哪组辅音都具有“双唇音”的发音部位？",
+        "options": [
+            "[p], [b], [m]",
+            "[p], [b], [f]",
+            "[b], [m], [w]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[f], [v]",
+        "translation": "下列哪组辅音都具有“唇齿音”的发音部位？",
+        "options": [
+            "[f], [v], [w]",
+            "[f], [v]",
+            "[f], [θ], [v]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[θ], [ð]",
+        "translation": "下列哪组辅音都具有“齿间音”的发音部位？",
+        "options": [
+            "[θ], [ð]",
+            "[s], [z], [θ]",
+            "[θ], [ð], [t]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[t], [d], [n], [s], [z], [l], [ɹ]",
+        "translation": "下列哪组辅音都具有“齿龈音”的发音部位？",
+        "options": [
+            "[t], [d], [n], [s], [z], [l]",
+            "[t], [d], [n], [s], [z], [l], [ɹ]",
+            "[t], [d], [n], [θ], [ð], [l]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[ʃ], [ʒ], [tʃ], [dʒ]",
+        "translation": "下列哪组辅音都具有“齿龈后音”的发音部位？",
+        "options": [
+            "[ʃ], [ʒ], [s], [z]",
+            "[ʃ], [ʒ], [tʃ], [dʒ]",
+            "[tʃ], [dʒ], [t], [d]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[j]",
+        "translation": "下列哪个辅音具有“硬腭音”的发音部位？（注：英语中典型的硬腭音）",
+        "options": [
+            "[j]",
+            "[tʃ]",
+            "[ʃ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[k], [ɡ], [ŋ]",
+        "translation": "下列哪组辅音都具有“软腭音”的发音部位？",
+        "options": [
+            "[k], [ɡ], [h]",
+            "[k], [ɡ], [ŋ]",
+            "[k], [ɡ], [x]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[w]",
+        "translation": "下列哪个辅音具有“双唇软腭音”的发音部位？",
+        "options": [
+            "[w]",
+            "[ʍ]",
+            "[v]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[p], [b]",
+        "translation": "下列哪组辅音是“双唇音”中的“塞音”？",
+        "options": [
+            "[p], [b], [m]",
+            "[p], [b]",
+            "[b], [m]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[t], [d]",
+        "translation": "下列哪组辅音是“齿龈音”中的“塞音”？",
+        "options": [
+            "[t], [d], [n]",
+            "[t], [d]",
+            "[d], [n]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[k], [ɡ]",
+        "translation": "下列哪组辅音是“软腭音”中的“塞音”？",
+        "options": [
+            "[k], [ɡ], [ŋ]",
+            "[k], [ɡ]",
+            "[ɡ], [ŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[f], [v]",
+        "translation": "下列哪组辅音是“唇齿音”中的“擦音”？",
+        "options": [
+            "[f], [v]",
+            "[f], [w]",
+            "[v], [w]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[s], [z]",
+        "translation": "下列哪组辅音是“齿龈音”中的“擦音”？",
+        "options": [
+            "[s], [z]",
+            "[s], [z], [θ]",
+            "[s], [z], [ʃ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[ʃ], [ʒ]",
+        "translation": "下列哪组辅音是“齿龈后音”中的“擦音”？",
+        "options": [
+            "[ʃ], [ʒ]",
+            "[tʃ], [dʒ]",
+            "[ʃ], [tʃ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[tʃ], [dʒ]",
+        "translation": "下列哪组辅音是“齿龈后音”中的“塞擦音”？",
+        "options": [
+            "[tʃ], [dʒ]",
+            "[ʃ], [ʒ]",
+            "[t], [d]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[p], [t], [k]",
+        "translation": "下列哪组辅音都是“清、不送气、塞音”？",
+        "options": [
+            "[p], [t], [k]",
+            "[b], [d], [g]",
+            "[pʰ], [tʰ], [kʰ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[b], [d], [ɡ]",
+        "translation": "下列哪组辅音都是“浊、不送气、塞音”？",
+        "options": [
+            "[p], [t], [k]",
+            "[b], [d], [ɡ]",
+            "[m], [n], [ŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[tʃ], [dʒ]",
+        "translation": "下列哪组辅音都是“塞擦音”？",
+        "options": [
+            "[tʃ], [dʒ]",
+            "[ʃ], [ʒ]",
+            "[s], [z]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[f], [θ], [s], [ʃ], [h]",
+        "translation": "下列哪组辅音都是“清、擦音”？",
+        "options": [
+            "[f], [θ], [s], [ʃ], [h]",
+            "[v], [ð], [z], [ʒ]",
+            "[f], [v], [θ], [ð]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[v], [ð], [z], [ʒ]",
+        "translation": "下列哪组辅音都是“浊、擦音”？",
+        "options": [
+            "[f], [θ], [s], [ʃ]",
+            "[v], [ð], [z], [ʒ]",
+            "[m], [n], [ŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[m], [n], [ŋ]",
+        "translation": "下列哪组辅音都是“浊、鼻音”？",
+        "options": [
+            "[m], [n], [ŋ]",
+            "[l], [ɹ], [j]",
+            "[b], [d], [ɡ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[l], [ɹ], [j], [w]",
+        "translation": "下列哪组辅音都是“浊、近音”？",
+        "options": [
+            "[m], [n], [ŋ]",
+            "[l], [ɹ], [j], [w]",
+            "[s], [z], [ʃ], [ʒ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[p], [b], [t], [d], [k], [ɡ]",
+        "translation": "下列哪组辅音都是“塞音”？",
+        "options": [
+            "[p], [b], [t], [d], [k], [ɡ]",
+            "[m], [n], [ŋ], [l]",
+            "[f], [v], [θ], [ð], [s], [z]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[m], [n], [ŋ], [l], [ɹ], [j], [w]",
+        "translation": "下列哪组辅音都是“浊音”？",
+        "options": [
+            "[p], [t], [k], [f], [s], [ʃ]",
+            "[m], [n], [ŋ], [l], [ɹ], [j], [w]",
+            "[b], [d], [ɡ], [v], [z], [ʒ]"
+        ]
+    },
+    {
+        "audioFile": "audio.mp3",
+        "start": 0.003528,
+        "end": 0.065464,
+        "correctAnswer": "[p], [t], [k], [f], [θ], [s], [ʃ], [h], [tʃ]",
+        "translation": "下列哪组辅音都是“清音”？",
+        "options": [
+            "[p], [t], [k], [f], [θ], [s], [ʃ], [h], [tʃ]",
+            "[b], [d], [ɡ], [v], [ð], [z], [ʒ], [dʒ]",
+            "[m], [n], [ŋ], [l], [ɹ], [j], [w]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 0.924417,
+        "end": 1.874417,
+        "correctAnswer": "[pen]",
+        "translation": "选择词汇 \"pen\" 的正确音标",
+        "options": [
+            "[pʰen]",
+            "[ben]",
+            "[pen]",
+            "[fen]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 2.664417,
+        "end": 3.674417,
+        "correctAnswer": "[bʊk]",
+        "translation": "选择词汇 \"book\" 的正确音标",
+        "options": [
+            "[buk]",
+            "[pʊk]",
+            "[bʊk]",
+            "[vʊk]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 4.634417,
+        "end": 5.354417,
+        "correctAnswer": "[tiː]",
+        "translation": "选择词汇 \"tea\" 的正确音标",
+        "options": [
+            "[tiː]",
+            "[tʰiː]",
+            "[diː]",
+            "[ʧiː]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 6.514417,
+        "end": 7.514417,
+        "correctAnswer": "[dɒɡ]",
+        "translation": "选择词汇 \"dog\" 的正确音标",
+        "options": [
+            "[tɒɡ]",
+            "[dɒk]",
+            "[dɒɡ]",
+            "[dɒŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 8.414417,
+        "end": 9.324417,
+        "correctAnswer": "[kæt]",
+        "translation": "选择词汇 \"cat\" 的正确音标",
+        "options": [
+            "[kʰæt]",
+            "[ɡæt]",
+            "[kæt]",
+            "[xæt]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 10.224417,
+        "end": 11.004417,
+        "correctAnswer": "[ɡəʊ]",
+        "translation": "选择词汇 \"go\" 的正确音标",
+        "options": [
+            "[kəʊ]",
+            "[ɡoʊ]",
+            "[ɡəʊ]",
+            "[ɣəʊ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 12.004417,
+        "end": 12.924417,
+        "correctAnswer": "[ʧeə]",
+        "translation": "选择词汇 \"chair\" 的正确音标",
+        "options": [
+            "[ʃeə]",
+            "[ʤeə]",
+            "[ʧeə]",
+            "[tʃʰeə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 14.014417,
+        "end": 14.754417,
+        "correctAnswer": "[ʤʌmp]",
+        "translation": "选择词汇 \"jump\" 的正确音标",
+        "options": [
+            "[ʧʌmp]",
+            "[jʌmp]",
+            "[ʤʌmp]",
+            "[zʌmp]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 15.924417,
+        "end": 16.804417,
+        "correctAnswer": "[fɪʃ]",
+        "translation": "选择词汇 \"fish\" 的正确音标",
+        "options": [
+            "[vɪʃ]",
+            "[fɪs]",
+            "[fɪʃ]",
+            "[pʰɪʃ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 17.594417,
+        "end": 18.684417,
+        "correctAnswer": "[ˈveri]",
+        "translation": "选择词汇 \"very\" 的正确音标",
+        "options": [
+            "[ˈferi]",
+            "[ˈveri]",
+            "[ˈwɛri]",
+            "[ˈbɛri]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 19.764417,
+        "end": 20.534417,
+        "correctAnswer": "[θɪŋk]",
+        "translation": "选择词汇 \"think\" 的正确音标",
+        "options": [
+            "[sɪŋk]",
+            "[θɪŋk]",
+            "[ðɪŋk]",
+            "[tʰɪŋk]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 21.404417,
+        "end": 22.474417,
+        "correctAnswer": "[ðɪs]",
+        "translation": "选择词汇 \"this\" 的正确音标",
+        "options": [
+            "[θɪs]",
+            "[ðɪs]",
+            "[zɪs]",
+            "[dɪs]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 23.314417,
+        "end": 24.344417,
+        "correctAnswer": "[sʌn]",
+        "translation": "选择词汇 \"sun\" 的正确音标",
+        "options": [
+            "[θʌn]",
+            "[sʌn]",
+            "[zʌn]",
+            "[ʃʌn]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 25.214417,
+        "end": 26.234417,
+        "correctAnswer": "[zuː]",
+        "translation": "选择词汇 \"zoo\" 的正确音标",
+        "options": [
+            "[suː]",
+            "[zuː]",
+            "[ʤuː]",
+            "[ðuː]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 27.234417,
+        "end": 28.214417,
+        "correctAnswer": "[ʃiː]",
+        "translation": "选择词汇 \"she\" 的正确音标",
+        "options": [
+            "[siː]",
+            "[ʒiː]",
+            "[ʧiː]",
+            "[ʃiː]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 29.274417,
+        "end": 30.414417,
+        "correctAnswer": "[ˈmeʒə]",
+        "translation": "选择词汇 \"measure\" 的正确音标",
+        "options": [
+            "[ˈmeʃə]",
+            "[ˈmezjə]",
+            "[ˈmeʒə]",
+            "[ˈmedʒə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 31.504417,
+        "end": 32.394417,
+        "correctAnswer": "[ˈhæpi]",
+        "translation": "选择词汇 \"happy\" 的正确音标",
+        "options": [
+            "[ˈxæpi]",
+            "[ˈhæpi]",
+            "[ˈæpi]",
+            "[ˈkʰæpi]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 33.384417,
+        "end": 34.524417,
+        "correctAnswer": "[mæn]",
+        "translation": "选择词汇 \"man\" 的正确音标",
+        "options": [
+            "[næn]",
+            "[mæn]",
+            "[mæŋ]",
+            "[bæn]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 35.334417,
+        "end": 36.374417,
+        "correctAnswer": "[nəʊ]",
+        "translation": "选择词汇 \"no\" 的正确音标",
+        "options": [
+            "[məʊ]",
+            "[nəʊ]",
+            "[ləʊ]",
+            "[dəʊ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 37.374417,
+        "end": 38.534417,
+        "correctAnswer": "[sɪŋ]",
+        "translation": "选择词汇 \"sing\" 的正确音标",
+        "options": [
+            "[sɪn]",
+            "[sɪŋk]",
+            "[sɪŋ]",
+            "[ʃɪŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 39.404417,
+        "end": 40.514417,
+        "correctAnswer": "[lɒŋ]",
+        "translation": "选择词汇 \"long\" 的正确音标",
+        "options": [
+            "[lɒn]",
+            "[lɒŋ]",
+            "[rɒŋ]",
+            "[nɒŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 41.344417,
+        "end": 42.174417,
+        "correctAnswer": "[red]",
+        "translation": "选择词汇 \"red\" 的正确音标",
+        "options": [
+            "[led]",
+            "[red]",
+            "[ɹed]",
+            "[wɛd]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 43.204417,
+        "end": 44.274417,
+        "correctAnswer": "[jes]",
+        "translation": "选择词汇 \"yes\" 的正确音标",
+        "options": [
+            "[ʤes]",
+            "[jes]",
+            "[ɣes]",
+            "[hes]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 45.204417,
+        "end": 46.154417,
+        "correctAnswer": "[wet]",
+        "translation": "选择词汇 \"wet\" 的正确音标",
+        "options": [
+            "[vet]",
+            "[hwet]",
+            "[wet]",
+            "[wɛt]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 47.174417,
+        "end": 48.274417,
+        "correctAnswer": "[ʍɪʧ]",
+        "translation": "选择词汇 \"which\" 在某些方言中的音标",
+        "options": [
+            "[wɪʧ]",
+            "[ʍɪʃ]",
+            "[ʍɪʧ]",
+            "[vɪʧ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 49.194417,
+        "end": 50.254417,
+        "correctAnswer": "[pleɪn]",
+        "translation": "选择词汇 “plane” 的正确音标",
+        "options": [
+            "[bleɪn]",
+            "[pʰleɪn]",
+            "[pleɪn]",
+            "[freɪn]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 51.114417,
+        "end": 52.144417,
+        "correctAnswer": "[dæd]",
+        "translation": "选择词汇 “dad” 的正确音标",
+        "options": [
+            "[tæd]",
+            "[dæt]",
+            "[dæd]",
+            "[ðæd]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 53.194417,
+        "end": 54.114417,
+        "correctAnswer": "[ɡɪv]",
+        "translation": "选择词汇 “give” 的正确音标",
+        "options": [
+            "[kɪv]",
+            "[ɡɪf]",
+            "[ɡɪv]",
+            "[ɣɪv]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 55.264417,
+        "end": 56.254417,
+        "correctAnswer": "[ˈʧɪkən]",
+        "translation": "选择词汇 “chicken” 的正确音标",
+        "options": [
+            "[ˈʃɪkən]",
+            "[ˈʧʰɪkən]",
+            "[ˈʧɪkən]",
+            "[ˈʤɪkən]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 57.304417,
+        "end": 58.474417,
+        "correctAnswer": "[ˈleɪʤə]",
+        "translation": "选择词汇 “leisure” 的正确音标",
+        "options": [
+            "[ˈliːʒə]",
+            "[ˈleɪʒə]",
+            "[ˈleɪʤə]",
+            "[ˈleɪʃə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 59.674417,
+        "end": 60.654417,
+        "correctAnswer": "[faɪn]",
+        "translation": "选择词汇 “fine” 的正确音标",
+        "options": [
+            "[vaɪn]",
+            "[faɪn]",
+            "[pʰaɪn]",
+            "[faɪm]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 61.634417,
+        "end": 62.654417,
+        "correctAnswer": "[ˈmʌðə]",
+        "translation": "选择词汇 “mother” 的正确音标",
+        "options": [
+            "[ˈmʌzə]",
+            "[ˈmʌðə]",
+            "[ˈmʌθə]",
+            "[ˈmʌtə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 63.754417,
+        "end": 64.934417,
+        "correctAnswer": "[ˈsiːzən]",
+        "translation": "选择词汇 “season” 的正确音标",
+        "options": [
+            "[ˈsiːðən]",
+            "[ˈziːzən]",
+            "[ˈsiːzən]",
+            "[ˈʃiːʒən]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 65.964417,
+        "end": 66.974417,
+        "correctAnswer": "[ˈʃʊɡə]",
+        "translation": "选择词汇 “sugar” 的正确音标",
+        "options": [
+            "[ˈsʊɡə]",
+            "[ˈʃʊdʒə]",
+            "[ˈʃʊɡə]",
+            "[ˈsjuːɡə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 68.024417,
+        "end": 69.034417,
+        "correctAnswer": "[haʊs]",
+        "translation": "选择词汇 “house” 的正确音标",
+        "options": [
+            "[haʊs]",
+            "[aʊs]",
+            "[xaʊs]",
+            "[haʊz]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 69.904417,
+        "end": 70.944417,
+        "correctAnswer": "[meɪl]",
+        "translation": "选择词汇 “mail” 的正确音标",
+        "options": [
+            "[meɪn]",
+            "[neɪl]",
+            "[meɪl]",
+            "[meɪɹ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 71.894417,
+        "end": 73.134417,
+        "correctAnswer": "[naɪs]",
+        "translation": "选择词汇 “nice” 的正确音标",
+        "options": [
+            "[naɪs]",
+            "[naɪz]",
+            "[laɪs]",
+            "[naɪθ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 74.024417,
+        "end": 75.194417,
+        "correctAnswer": "[ˈsɪŋɪŋ]",
+        "translation": "选择词汇 “singing” 的正确音标",
+        "options": [
+            "[ˈsɪŋɡɪŋ]",
+            "[ˈsɪnɪŋ]",
+            "[ˈsɪŋɪŋ]",
+            "[ˈʃɪŋɪŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 76.034417,
+        "end": 76.804417,
+        "correctAnswer": "[laɪt]",
+        "translation": "选择词汇 “light” 的正确音标",
+        "options": [
+            "[raɪt]",
+            "[laɪt]",
+            "[naɪt]",
+            "[laɪd]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 77.854417,
+        "end": 78.854417,
+        "correctAnswer": "[raɪt]",
+        "translation": "选择词汇 “right” 的正确音标",
+        "options": [
+            "[laɪt]",
+            "[raɪt]",
+            "[waɪt]",
+            "[raɪd]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 79.734417,
+        "end": 80.814417,
+        "correctAnswer": "[jɛs]",
+        "translation": "选择词汇 “yes” 的正确音标（美式）",
+        "options": [
+            "[ʤɛs]",
+            "[jɛs]",
+            "[ɣɛs]",
+            "[ðɛs]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 81.724417,
+        "end": 82.454417,
+        "correctAnswer": "[waɪf]",
+        "translation": "选择词汇 “wife” 的正确音标",
+        "options": [
+            "[vaɪf]",
+            "[waɪf]",
+            "[ʍaɪf]",
+            "[waɪv]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 83.734417,
+        "end": 84.744417,
+        "correctAnswer": "[ˈbʌtə]",
+        "translation": "选择词汇 “butter” 的正确音标（带闪音）",
+        "options": [
+            "[ˈbʌtə]",
+            "[ˈbʌdə]",
+            "[ˈbʌɾə]",
+            "[ˈbʌθə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 85.904417,
+        "end": 86.934417,
+        "correctAnswer": "[ˈwɔːtə]",
+        "translation": "选择词汇 “water” 的正确音标（英式）",
+        "options": [
+            "[ˈwɑːɾə]",
+            "[ˈwɔːtə]",
+            "[ˈvɔːtə]",
+            "[ˈwɔːdə]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 88.134417,
+        "end": 89.064417,
+        "correctAnswer": "[θɪŋ]",
+        "translation": "选择词汇 “thing” 的正确音标",
+        "options": [
+            "[sɪŋ]",
+            "[tɪŋ]",
+            "[θɪŋ]",
+            "[ðɪŋ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 89.904417,
+        "end": 90.954417,
+        "correctAnswer": "[ðen]",
+        "translation": "选择词汇 “then” 的正确音标",
+        "options": [
+            "[den]",
+            "[zen]",
+            "[ðen]",
+            "[θen]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 91.934417,
+        "end": 92.954417,
+        "correctAnswer": "[briːð]",
+        "translation": "选择词汇 “breathe” 的正确音标",
+        "options": [
+            "[briːθ]",
+            "[briːd]",
+            "[briːð]",
+            "[briːz]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 93.944417,
+        "end": 95.194417,
+        "correctAnswer": "[kləʊs]",
+        "translation": "选择词汇 “close” 的正确音标（形容词）",
+        "options": [
+            "[kləʊz]",
+            "[ɡləʊs]",
+            "[kləʊs]",
+            "[kʰləʊs]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 96.124417,
+        "end": 96.934417,
+        "correctAnswer": "[pɑːk]",
+        "translation": "选择词汇 “park” 的正确音标（英式）",
+        "options": [
+            "[bɑːk]",
+            "[pʰɑːk]",
+            "[pɑːk]",
+            "[pɑːɡ]"
+        ]
+    },
+    {
+        "audioFile": "audio1.mp3",
+        "start": 97.774417,
+        "end": 98.834417,
+        "correctAnswer": "[ˈveri]",
+        "translation": "选择词汇 “very” 的正确音标（强化 [v] 音）",
+        "options": [
+            "[ˈberi]",
+            "[ˈferi]",
+            "[ˈveri]",
+            "[ˈwɛri]"
+        ]
+    }
+];
+
+
+
+        let currentIndex = 0;
+        let isFreeMode = true;
+        let correctCount = 0;
+        let isPlaying = false;
+        let correctSentences = new Set();
+        let wrongSentences = new Set();
+        let autoContinue = false;
+        let showAnswer = false;
+        let userAnswers = [];
+
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function init() {
+            updateSentenceDisplay();
+        }
+
+        function updateSentenceDisplay() {
+            sentenceNumber.value = currentIndex + 1;
+            indicator.style.background = '#ffffe0';
+            if (isFreeMode && showAnswer) {
+                indicator.innerHTML = `
+                    <div style="font-size: 18px; font-weight: bold; color: #2f2f2f;">${sentences[currentIndex].translation}</div>
+                `;
+            } else {
+                indicator.innerHTML = '';
+            }
+            updateOptions();
+            if (!isFreeMode) updateScore();
+        }
+
+        function updateOptions() {
+            optionsContainer.innerHTML = '';
+            const shuffledOptions = shuffleArray(sentences[currentIndex].options);
+            shuffledOptions.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'optionBtn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function playCurrentSentence() {
+            if (isPlaying) audio.pause();
+            buttons.forEach(btn => btn.classList.add('disabled'));
+            sentenceNumber.disabled = true;
+            isPlaying = true;
+            audio.src = sentences[currentIndex].audioFile;
+            audio.currentTime = sentences[currentIndex].start;
+            audio.play().catch(error => {
+                console.error('Audio playback failed:', error);
+                alert('Vui lòng nhấn nút “再听一遍” để phát âm thanh.');
+                buttons.forEach(btn => btn.classList.remove('disabled'));
+                sentenceNumber.disabled = false;
+                isPlaying = false;
+            });
+
+            audio.ontimeupdate = () => {
+                if (audio.currentTime >= sentences[currentIndex].end) {
+                    audio.pause();
+                    audio.ontimeupdate = null;
+                    buttons.forEach(btn => btn.classList.remove('disabled'));
+                    sentenceNumber.disabled = false;
+                    isPlaying = false;
+                }
+            };
+        }
+
+        function moveSentence(direction) {
+            currentIndex = (currentIndex + direction + sentences.length) % sentences.length;
+            updateSentenceDisplay();
+            playCurrentSentence();
+        }
+
+        function checkAnswer(selectedAnswer) {
+            const correctAnswer = sentences[currentIndex].correctAnswer;
+            const optionButtons = optionsContainer.getElementsByClassName('optionBtn');
+            
+            // Clear previous styles
+            for (let btn of optionButtons) {
+                btn.classList.remove('correct', 'wrong');
+                btn.disabled = !isFreeMode; // Only disable buttons in Test Mode
+            }
+
+            // Find and style the selected button
+            for (let btn of optionButtons) {
+                if (btn.textContent === selectedAnswer) {
+                    if (selectedAnswer === correctAnswer) {
+                        indicator.style.background = '#B7D7AA';
+                                                indicator.innerHTML = `
+                    <div style="font-size: 18px; font-weight: bold; color: #000000;">${sentences[currentIndex].translation}</div>
+                `;
+                        btn.classList.add('correct');
+                        correctAudio.play().catch(error => {
+                            console.error('Correct audio playback failed:', error);
+                        });
+                    } else {
+                        indicator.style.background = '#CE6D5E';
+                                                indicator.innerHTML = `
+                    <div style="font-size: 18px; font-weight: bold; color: #000000;">${sentences[currentIndex].translation}</div>
+                `;
+                        btn.classList.add('wrong');
+                        wrongAudio.play().catch(error => {
+                            console.error('Wrong audio playback failed:', error);
+                        });
+                    }
+                }
+            }
+
+            if (!isFreeMode) {
+                userAnswers[currentIndex] = selectedAnswer;
+                if (selectedAnswer === correctAnswer && !correctSentences.has(currentIndex)) {
+                    correctCount++;
+                    correctSentences.add(currentIndex);
+                    wrongSentences.delete(currentIndex);
+                } else if (selectedAnswer !== correctAnswer && !correctSentences.has(currentIndex)) {
+                    wrongSentences.add(currentIndex);
+                }
+                updateScore();
+
+                // Auto-move to next sentence in Test Mode
+                const audioToWait = (selectedAnswer === correctAnswer) ? correctAudio : wrongAudio;
+                audioToWait.onended = () => {
+                    if (userAnswers.length === sentences.length) {
+                        showResults();
+                    } else {
+                        setTimeout(() => {
+                            moveSentence(1);
+                        }, 200);
+                    }
+                };
+            } else if (isFreeMode && autoContinue && selectedAnswer === correctAnswer) {
+                // Auto-move in Free Mode only if answer is correct and autoContinue is enabled
+                correctAudio.onended = () => {
+                    setTimeout(() => {
+                        moveSentence(1);
+                    }, 200);
+                };
+            } else {
+                correctAudio.onended = null;
+                wrongAudio.onended = null;
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `${correctCount}/${sentences.length}`;
+            scoreDisplay.style.display = 'block'; // Hiển thị score trong Test Mode
+        }
+
+        function showResults() {
+            let resultText = `练习完成！\n正确答案数量：${correctCount}/${sentences.length}\n正确率：${((correctCount / sentences.length) * 100).toFixed(2)}%\n错误题目：`;
+            wrongSentences.forEach(index => {
+                resultText += `\n第${index + 1}题：\n你的选择：${userAnswers[index] || '未选择'}\n正确答案：${sentences[index].correctAnswer}\n`;
+            });
+            if (wrongSentences.size === 0) {
+                resultText += '\n全部正确！';
+            }
+            resultsDisplay.textContent = resultText;
+            resultsDisplay.style.display = 'block';
+        }
+
+        prevBtn.onclick = () => {
+            moveSentence(-1);
+        };
+
+        nextBtn.onclick = () => {
+            moveSentence(1);
+        };
+
+        replayBtn.onclick = () => {
+            playCurrentSentence();
+        };
+
+        freeModeBtn.onclick = () => {
+            isFreeMode = true;
+            freeModeBtn.classList.add('active-mode');
+            testModeBtn.classList.remove('active-mode');
+            autoContinueBtn.disabled = false;
+            autoContinueBtn.classList.remove('disabled');
+            showHideBtn.disabled = false;
+            showHideBtn.classList.remove('disabled');
+            scoreDisplay.style.display = 'none';
+            wrongSentencesDisplay.style.display = 'none';
+            resultsDisplay.style.display = 'none';
+            updateSentenceDisplay();
+        };
+
+        testModeBtn.onclick = () => {
+            isFreeMode = false;
+            testModeBtn.classList.add('active-mode');
+            freeModeBtn.classList.remove('active-mode');
+            autoContinueBtn.disabled = true;
+            autoContinueBtn.classList.add('disabled');
+            showHideBtn.disabled = true;
+            showHideBtn.classList.add('disabled');
+            showHideBtn.classList.remove('active-mode');
+            showAnswer = false;
+            scoreDisplay.style.display = 'block';
+            currentIndex = 0;
+            correctCount = 0;
+            correctSentences.clear();
+            wrongSentences.clear();
+            userAnswers = [];
+            for (let i = 0; i < sentences.length; i++) {
+                wrongSentences.add(i);
+            }
+            updateSentenceDisplay();
+        };
+
+        autoContinueBtn.onclick = () => {
+            if (isFreeMode) {
+                autoContinue = !autoContinue;
+                autoContinueBtn.classList.toggle('active-mode');
+                if (!autoContinue) {
+                    correctAudio.onended = null;
+                }
+            }
+        };
+
+        showHideBtn.onclick = () => {
+            if (isFreeMode) {
+                showAnswer = !showAnswer;
+                showHideBtn.classList.toggle('active-mode');
+                updateSentenceDisplay();
+            }
+        };
+
+        sentenceNumber.onchange = () => {
+            if (!isPlaying) {
+                const num = parseInt(sentenceNumber.value) - 1;
+                if (!isNaN(num) && num >= 0 && num < sentences.length) {
+                    currentIndex = num;
+                    updateSentenceDisplay();
+                    playCurrentSentence();
+                } else {
+                    alert(`输入范围： 1 到 ${sentences.length}`);
+                    updateSentenceDisplay();
+                }
+            }
+        };
+
+        sentenceNumber.onkeydown = (e) => {
+            if (!isPlaying) {
+                if (e.key === 'ArrowLeft') {
+                    moveSentence(-1);
+                }
+                if (e.key === 'ArrowRight') {
+                    moveSentence(1);
+                }
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
